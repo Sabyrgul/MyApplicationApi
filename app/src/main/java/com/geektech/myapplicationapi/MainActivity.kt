@@ -19,8 +19,13 @@ class MainActivity : AppCompatActivity() {
         binding?.rvAdapter?.adapter=adapter
 
         var page=0
+        binding?.etQuery?.setOnClickListener {
+            page=0
+            binding?.btnNextPage?.text="Search"
+        }
         binding?.btnNextPage?.setOnClickListener {
             page++
+            binding?.btnNextPage?.text="Next page"
             makeRequest(page)
         }
     }
