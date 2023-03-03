@@ -11,14 +11,18 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
     private var binding:ActivityMainBinding?=null
     private val adapter=RvAdapter()
-
+    private var page=0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         binding?.rvAdapter?.adapter=adapter
 
-        var page=0
+        initListeners()
+
+    }
+
+    private fun initListeners() {
         binding?.etQuery?.setOnClickListener {
             page=0
             binding?.btnNextPage?.text="Search"
@@ -26,6 +30,10 @@ class MainActivity : AppCompatActivity() {
         binding?.btnNextPage?.setOnClickListener {
             page++
             binding?.btnNextPage?.text="Next page"
+            makeRequest(page)
+        }
+        binding?.rvAdapter?.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            page++
             makeRequest(page)
         }
     }
