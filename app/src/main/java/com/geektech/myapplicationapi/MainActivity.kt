@@ -3,6 +3,9 @@ package com.geektech.myapplicationapi
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.AbsListView
+import android.widget.AbsListView.OnScrollListener
+import androidx.recyclerview.widget.RecyclerView
 import com.geektech.myapplicationapi.databinding.ActivityMainBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private var binding:ActivityMainBinding?=null
     private val adapter=RvAdapter()
     private var page=0
+    private var  isScroll = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityMainBinding.inflate(layoutInflater)
@@ -32,10 +36,23 @@ class MainActivity : AppCompatActivity() {
             binding?.btnNextPage?.text="Next page"
             makeRequest(page)
         }
-        binding?.rvAdapter?.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            page++
-            makeRequest(page)
-        }
+        binding?.rvAdapter?.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                isScroll = true
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (isScroll && dy < 0){
+                    page++
+                    makeRequest(page)
+                    isScroll = false
+                }
+            }
+
+        })
+
     }
 
     private fun makeRequest(page: Int) {
